@@ -1,23 +1,25 @@
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Wilczura.Demo.Host.Controllers;
+using Wilczura.Demo.Host.Setup;
+using Wilczura.Demo.Persistence;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var domainName = "demo";
+var logger = builder.GetStartupLogger(domainName);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.AddCommonServices(domainName, logger);
+var controllersAssemblyPart = new AssemblyPart(typeof(HealthController).Assembly);
+var mvcBuilder = builder.AddWebServices(controllersAssemblyPart, logger);
+mvcBuilder.AddOData(builder, logger);
+builder.AddOtherServices();
 
+
+builder.AddPostgres<DemoDbContext>(connectionStringName: domainName, logger: logger, sectionName: null);
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+await app.ApplyDatabaseMigrationsAsync<DemoDbContext>();
 
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseDefaults();
 
 app.Run();
