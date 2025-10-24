@@ -1,0 +1,6 @@
+@Wilczura.Demo.Host_HostAddress = http://localhost:5042
+
+GET {{Wilczura.Demo.Host_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
