@@ -16,6 +16,8 @@ using Wilczura.Demo.Common.Consts;
 using Wilczura.Demo.Common.Exceptions;
 using Wilczura.Demo.Common.Logging;
 using Wilczura.Demo.Common.Models;
+using Wilczura.Demo.Persistence.Models;
+using Wilczura.Demo.Persistence.Repositories;
 
 namespace Wilczura.Demo.Host.Setup;
 
@@ -63,6 +65,7 @@ public static class ApplicationBuilderExtensions
 
     public static WebApplicationBuilder AddOtherServices(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<ODataRepository<Country>, CountryODataRepository>();
         return builder;
     }
 
